@@ -34,7 +34,8 @@ class UtilsCache:
     invalid_cached_projects = []
 
     def __init__(self):
-        self.cache_manager = JsonSqliteDict(table="utils_cache_manager")
+        cache_db = Config().get("cache_dbs", default=":memory:")
+        self.cache_manager = JsonSqliteDict(database=cache_db, table="utils_cache_manager")
 
     # Invalid the spider's list's cache of a given project (by name)
     @staticmethod
