@@ -10,6 +10,8 @@ from twisted.python import log
 
 from .utils import get_spider_list, JsonResource, UtilsCache, native_stringify_dict
 
+from datetime import datetime
+
 class WsResource(JsonResource):
 
     def __init__(self, root):
@@ -51,10 +53,15 @@ class Schedule(WsResource):
         if not spider in spiders:
             return {"status": "error", "message": "spider '%s' not found" % spider}
         args['settings'] = settings
-        jobid = args.pop('jobid', uuid.uuid1().hex)
+        jobid = self._make_jobid(args)
         args['_job'] = jobid
         self.root.scheduler.schedule(project, spider, priority=priority, **args)
         return {"node_name": self.root.nodename, "status": "ok", "jobid": jobid}
+
+    def _make_jobid(self, args):
+        date = datetime.now().strftime('%Y-%m-%d')
+        jobid = args.pop('jobid', uuid.uuid1().hex)
+        return f'{date}_{jobid}'
 
 class Cancel(WsResource):
 

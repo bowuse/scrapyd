@@ -7,3 +7,5 @@ docs/_build
 venv
 dist
 build
+test_scrapy_project
+.idea
